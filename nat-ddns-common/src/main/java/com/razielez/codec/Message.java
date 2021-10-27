@@ -10,4 +10,16 @@ public class Message {
   private Map<String, Object> mateData;
   private byte[] body;
 
+  public static Message create(
+      final MessageType type,
+      final Map<String, Object> mateData,
+      final byte[] body
+  ) {
+    Message message = new Message();
+    message.setType(type);
+    message.setMateData(mateData);
+    message.setBody(body);
+    return message;
+  }
+
 }
