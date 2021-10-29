@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
-public class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
+public final class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
 
   @Override
   protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf in, List<Object> out) throws Exception {
