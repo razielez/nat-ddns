@@ -6,6 +6,10 @@ import lombok.Data;
 @Data
 public class Message {
 
+  /**
+   * 消息流水号
+   */
+  private Long serialNo;
   private MessageType type;
   private Map<String, Object> mateData;
   private byte[] body;
