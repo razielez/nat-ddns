@@ -1,10 +1,16 @@
 package com.razielez.codec;
 
 import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Message {
+
+  public static final Message HEARTBEAT = new Message(MessageType.HEARTBEAT);
 
   /**
    * 消息流水号
@@ -13,6 +19,10 @@ public class Message {
   private MessageType type;
   private Map<String, Object> mateData;
   private byte[] body;
+
+  public Message(MessageType type) {
+    this.type = type;
+  }
 
   public static Message create(
       final MessageType type,
@@ -25,5 +35,4 @@ public class Message {
     message.setBody(body);
     return message;
   }
-
 }
