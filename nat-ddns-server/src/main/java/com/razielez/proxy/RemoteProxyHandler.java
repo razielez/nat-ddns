@@ -1,0 +1,48 @@
+package com.razielez.proxy;
+
+import com.razielez.HeartbeatHandler;
+import com.razielez.codec.Message;
+import com.razielez.codec.MessageType;
+import io.netty.channel.ChannelHandlerContext;
+import java.util.HashMap;
+
+public class RemoteProxyHandler extends HeartbeatHandler {
+
+  private final HeartbeatHandler proxyHandler;
+
+
+  public RemoteProxyHandler(HeartbeatHandler proxyHandler) {
+    this.proxyHandler = proxyHandler;
+  }
+
+  @Override
+  public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    Message message = new Message();
+    message.setType(MessageType.CONNECT);
+    HashMap<String, Object> metaData = new HashMap<>();
+    metaData.put("channelId", ctx.channel().id().asLongText());
+    message.setMateData(metaData);
+    proxyHandler.getCtx().writeAndFlush(message);
+  }
+
+  @Override
+  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    Message message = new Message();
+    message.setType(MessageType.DISCONNECT);
+    HashMap<String, Object> metaData = new HashMap<>();
+    metaData.put("channelId", ctx.channel().id().asLongText());
+    message.setMateData(metaData);
+    proxyHandler.getCtx().writeAndFlush(message);
+  }
+
+  @Override
+  public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    byte data = (byte) msg;
+    Message message = new Message();
+    message.setType(MessageType.TRANSFER);
+    HashMap<String, Object> metaData = new HashMap<>();
+    metaData.put("channelId", ctx.channel().id().asLongText());
+    message.setMateData(metaData);
+    proxyHandler.getCtx().writeAndFlush(message);
+  }
+}
