@@ -26,7 +26,7 @@ public class TcpServer {
           .childHandler(channelInitializer)
           .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-      ch = b.bind().sync().channel();
+      ch = b.bind(port).sync().channel();
       ch.closeFuture().addListener(x -> {
             workGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
