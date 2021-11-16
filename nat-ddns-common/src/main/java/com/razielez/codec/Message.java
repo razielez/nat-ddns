@@ -1,9 +1,11 @@
 package com.razielez.codec;
 
+import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import sun.jvm.hotspot.oops.MethodData;
 
 @Data
 @AllArgsConstructor
@@ -33,6 +35,18 @@ public class Message {
     message.setType(type);
     message.setMateData(mateData);
     message.setBody(body);
+    return message;
+  }
+
+  public static Message registerFailed(
+      final String errorMsg
+  ) {
+    HashMap<String, Object> metaData = new HashMap<>();
+    metaData.put("success", false);
+    metaData.put("errorMsg", errorMsg);
+    Message message = new Message();
+    message.setMateData(metaData);
+    message.setType(MessageType.AUTH);
     return message;
   }
 }
