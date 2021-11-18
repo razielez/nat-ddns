@@ -5,12 +5,14 @@ import com.razielez.TcpServer;
 import com.razielez.codec.Message;
 import com.razielez.codec.MessageType;
 import com.razielez.utils.StringUtils;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import io.netty.util.internal.StringUtil;
 import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,10 +21,10 @@ public class ServerProxyHandler extends HeartbeatHandler {
 
   private static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
   private final String password;
-  private final TcpServer tcpServer = new TcpServer();
+  private final TcpServer remoteServer = new TcpServer();
   private int port;
 
-  private final boolean registered = false;
+  private boolean registered = false;
 
   public ServerProxyHandler(String password) {
     this.password = password;
@@ -30,9 +32,9 @@ public class ServerProxyHandler extends HeartbeatHandler {
 
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-    tcpServer.close();
+    remoteServer.close();
     if (registered) {
-      log.info("Sever stop on port: {}" , port);
+      log.info("Sever stop on port: {}", port);
     }
   }
 
@@ -61,28 +63,45 @@ public class ServerProxyHandler extends HeartbeatHandler {
   }
 
   private void processConnect(Message message) {
-    HashMap<Object, Object> metaData = new HashMap<>();
+    HashMap<String, Object> metaData = new HashMap<>();
     String password = message.getMateData().get("password").toString();
     boolean success = StringUtils.equals(password, this.password);
-    Message resultMessage = null;
     if (success) {
-      int port = (int) metaData.get("port");
-
-
-
+      int port = (int) message.getMateData().get("port");
+      ServerProxyHandler handler = this;
+      try {
+        remoteServer.bind(port, new ChannelInitializer() {
+          @Override
+          protected void initChannel(Channel ch) throws Exception {
+            ch.pipeline().addLast(
+                new ByteArrayDecoder(),
+                new ByteArrayEncoder(),
+                new RemoteProxyHandler(handler)
+            );
+            channels.add(ch);
+          }
+        });
+        metaData.put("success", true);
+        this.port = port;
+        registered = true;
+        log.info("Register success, start server on port:{}", port);
+      } catch (InterruptedException e) {
+        log.error("Bind error, ", e);
+        metaData.put("success", false);
+        metaData.put("reason", e.getMessage());
+      }
     } else {
-      resultMessage = Message.registerFailed("bad password");
+      metaData.put("success", false);
+      metaData.put("reason", "Pwd is wrong");
     }
-
-    ctx.writeAndFlush(resultMessage);
-
+    Message result = new Message();
+    result.setType(MessageType.AUTH);
+    result.setMateData(metaData);
+    ctx.writeAndFlush(result);
     if (!registered) {
       log.error("Register error, {}", metaData.get("reason"));
       ctx.close();
     }
-
-
-
   }
 
   private void processDisConnect(Message message) {
