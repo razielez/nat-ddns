@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientLaunch {
 
   public static void main(String[] args) {
-    final String serverHost = "127.0.0.1";
+    final String tx = System.getenv().get("tx");
+    assert tx != null;
+    final String serverHost = tx;
     final int serverPort = 8085;
-    final int remotePort = 8088;
+    final int remotePort = 1313;
     final String proxyHost = "127.0.0.1";
     final int proxyPort = 1313;
     final String password = "asdasd";
