@@ -10,8 +10,8 @@
   <version>1.0-SNAPSHOT</version>
   <modules>
     <module>nat-ddns-common</module>
-    <module>nat-ddns-client</module>
     <module>nat-ddns-server</module>
+    <module>nat-ddns-client</module>
   </modules>
 
   <properties>
