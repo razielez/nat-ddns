@@ -7,13 +7,13 @@
     </layout>
   </appender>
 
-  <appender name="ServerLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>server.log</file>
+  <appender name="ClientLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>client.log</file>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%class{16} %line] - %msg%n</Pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <FileNamePattern>server.%d{yyyy-MM-dd}.%i.log.zip
+      <FileNamePattern>client.%d{yyyy-MM-dd}.%i.log.zip
       </FileNamePattern>
       <maxHistory>3</maxHistory>
       <maxFileSize>1GB</maxFileSize>
@@ -23,7 +23,7 @@
   </appender>
 
   <logger name="MAIN" additivity="false" level="INFO">
-    <appender-ref ref="ServerLog"/>
+    <appender-ref ref="ClientLog"/>
     <appender-ref ref="STDOUT"/>
   </logger>
 
