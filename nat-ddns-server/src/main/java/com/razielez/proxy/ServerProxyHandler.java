@@ -42,23 +42,22 @@ public class ServerProxyHandler extends HeartbeatHandler {
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     Message message = (Message) msg;
     MessageType type = message.getType();
-    if (MessageType.CONNECT.equals(type)) {
+    if (MessageType.AUTH.equals(type)) {
       processConnect(message);
     }
-    if (registered) {
-      switch (type) {
-        case DISCONNECT:
-          processDisConnect(message);
-          break;
-        case TRANSFER:
-          processTransfer(message);
-          break;
-        case HEARTBEAT:
-          processIDLE(message);
-          break;
-      }
-    } else {
+    if (!registered) {
       ctx.close();
+    }
+    switch (type) {
+      case DISCONNECT:
+        processDisConnect(message);
+        break;
+      case TRANSFER:
+        processTransfer(message);
+        break;
+      case HEARTBEAT:
+        processIDLE(message);
+        break;
     }
   }
 

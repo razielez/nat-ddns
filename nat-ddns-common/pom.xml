@@ -5,9 +5,17 @@
   <parent>
     <groupId>com.razielez</groupId>
     <artifactId>nat-ddns</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>nat-ddns-common</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
+      <version>3.2</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 
 </project>

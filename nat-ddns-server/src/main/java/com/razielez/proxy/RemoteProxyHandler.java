@@ -37,12 +37,10 @@ public class RemoteProxyHandler extends HeartbeatHandler {
 
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    byte data = (byte) msg;
-    Message message = new Message();
-    message.setType(MessageType.TRANSFER);
+    byte[] data = (byte[]) msg;
     HashMap<String, Object> metaData = new HashMap<>();
     metaData.put("channelId", ctx.channel().id().asLongText());
-    message.setMateData(metaData);
+    Message message = Message.create(MessageType.TRANSFER, metaData, data);
     proxyHandler.getCtx().writeAndFlush(message);
   }
 }

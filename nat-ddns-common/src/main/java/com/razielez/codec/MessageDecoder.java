@@ -1,28 +1,35 @@
 package com.razielez.codec;
 
+import com.razielez.serialize.ProtostuffSerializer;
+import com.razielez.serialize.Serializer;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import org.json.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
+
+  private static final Serializer serializer = ProtostuffSerializer.INSTANCE;
 
   @Override
   protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf in, List<Object> out) throws Exception {
-    byte typeBytes = in.readByte();
-    MessageType type = MessageType.valueOfCode(typeBytes);
-    int metaLen = in.readInt();
-    CharSequence metaSeq = in.readCharSequence(metaLen, StandardCharsets.UTF_8);
-    Map<String, Object> metaData = new JSONObject(metaSeq).toMap();
-    byte[] body = new byte[0];
-    if (in.isReadable()) {
-      body = ByteBufUtil.getBytes(in);
+    if (in.readableBytes() < 4) {
+      return;
     }
-    Message message = Message.create(type, metaData, body);
-    out.add(message);
+    try {
+      in.markReaderIndex();
+      int len = in.readInt();
+      if (in.readableBytes() < len) {
+        in.resetReaderIndex();
+        return;
+      }
+      byte[] data = new byte[len];
+      in.readBytes(data);
+      out.add(serializer.deserialize(data, Message.class));
+    } catch (Exception e) {
+      log.error("Decode message error, in:{}", in, e);
+    }
   }
 }

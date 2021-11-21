@@ -24,8 +24,14 @@ public class TcpConnection {
         .option(ChannelOption.SO_KEEPALIVE, true)
         .handler(channelInitializer)
     ;
-    Channel channel = b.connect(host, port).sync().channel();
-    return channel.closeFuture().addListener(x -> workerGroup.shutdownGracefully());
+    try {
+      Channel channel = b.connect(host, port).sync().channel();
+      return channel.closeFuture().addListener(x -> workerGroup.shutdownGracefully());
+    } catch (InterruptedException e) {
+      log.error("Connect error, ", e);
+      workerGroup.shutdownGracefully();
+      throw e;
+    }
   }
 
 }

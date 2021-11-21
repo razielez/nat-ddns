@@ -4,17 +4,17 @@ import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Launch {
+public class ClientLaunch {
 
   public static void main(String[] args) {
     final String serverHost = "127.0.0.1";
-    final int serverPort = 9090;
-    final int remotePort = 8080;
+    final int serverPort = 8085;
+    final int remotePort = 8088;
     final String proxyHost = "127.0.0.1";
-    final int proxyPort = 1333;
+    final int proxyPort = 1313;
     final String password = "asdasd";
-    Launch launch = new Launch();
-    launch.connect(serverHost, serverPort, password, remotePort, proxyHost, proxyPort);
+    ClientLaunch clientLaunch = new ClientLaunch();
+    clientLaunch.connect(serverHost, serverPort, password, remotePort, proxyHost, proxyPort);
   }
 
   private void connect(String serverHost, int serverPort, String password, int remotePort, String proxyHost, int proxyPort) {
@@ -51,12 +51,13 @@ public class Launch {
     public void run() {
       while (true) {
         try {
+          log.info("Retry remote server, host:{}, port:{}, remotePort:{}", serverHost, serverPort, remotePort);
           connect(serverHost, serverPort, password, remotePort, proxyHost, proxyPort);
           break;
         } catch (Exception e) {
           log.error("Retry connect failed, ", e);
           try {
-            Thread.sleep(10000);
+            Thread.sleep(1000);
           } catch (InterruptedException e1) {
             log.error("Error, ", e1);
           }

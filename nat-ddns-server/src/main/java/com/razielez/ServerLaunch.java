@@ -1,11 +1,11 @@
 package com.razielez;
 
-public class Launch {
+public class ServerLaunch {
 
 
   public static void main(String[] args) {
     final String password = "asdasd";
-    final Integer port = 8080;
+    final int port = 8085;
     try {
       new Server().start(port, password);
     } catch (Exception e) {

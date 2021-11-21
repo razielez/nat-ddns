@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import java.util.concurrent.TimeUnit;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -21,10 +22,10 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     ServerProxyHandler serverHandler = new ServerProxyHandler(password);
     ch.pipeline()
         .addLast(
-            new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
+            new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 0),
             new MessageDecoder(),
             new MessageEncoder(),
-            new IdleStateHandler(60, 30, 0),
+            new IdleStateHandler(60, 30, 30, TimeUnit.SECONDS),
             serverHandler
         );
   }

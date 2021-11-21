@@ -7,7 +7,7 @@
   <groupId>com.razielez</groupId>
   <artifactId>nat-ddns</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.1</version>
   <modules>
     <module>nat-ddns-common</module>
     <module>nat-ddns-server</module>
@@ -52,6 +52,24 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.3.0-alpha5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.dyuproject.protostuff</groupId>
+      <artifactId>protostuff-core</artifactId>
+      <version>1.0.8</version>
+    </dependency>
+    <dependency>
+      <groupId>com.dyuproject.protostuff</groupId>
+      <artifactId>protostuff-runtime</artifactId>
+      <version>1.0.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
+      <version>3.2</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
