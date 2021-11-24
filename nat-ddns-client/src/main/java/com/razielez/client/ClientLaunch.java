@@ -14,7 +14,7 @@ public class ClientLaunch {
     final int remotePort = 1313;
     final String proxyHost = "127.0.0.1";
     final int proxyPort = 1313;
-    final String password = "asdasd";
+    final String password = "asdasdasdad";
     ClientLaunch clientLaunch = new ClientLaunch();
     clientLaunch.connect(serverHost, serverPort, password, remotePort, proxyHost, proxyPort);
   }
