@@ -5,6 +5,7 @@ import com.razielez.utils.JsonTools;
 import com.razielez.utils.Utils;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 import lombok.SneakyThrows;
@@ -52,8 +53,12 @@ public abstract class LoadSetting {
 
 
   private String readConfig() throws IOException {
-    String path = System.getenv().get(Constants.CONFIG_VARIABLE);
-    return new String(Files.readAllBytes(Paths.get(path)));
+    Path defaultPath = getDefaultConfigPath();
+    return new String(Files.readAllBytes(defaultPath));
+  }
+
+  private Path getDefaultConfigPath() {
+    return Paths.get(System.getenv().get(Constants.CONFIG_VARIABLE));
   }
 }
 

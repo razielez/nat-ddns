@@ -1,0 +1,9 @@
+{
+  "serverHost": "test.com",
+  "password": "0267d1fd-01dd-4d6e-be82-fe8c5e377e60",
+  "proxyHost": "127.0.0.1",
+  "proxyPort": 1313,
+  "remotePort": 9090,
+  "serverPort": 8080
+}
+
