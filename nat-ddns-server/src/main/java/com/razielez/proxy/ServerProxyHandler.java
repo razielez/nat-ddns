@@ -41,7 +41,7 @@ public class ServerProxyHandler extends HeartbeatHandler {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     Message message = (Message) msg;
-    MessageType type = message.getType();
+    MessageType type = message.type();
     if (MessageType.AUTH.equals(type)) {
       processConnect(message);
     }
@@ -63,10 +63,10 @@ public class ServerProxyHandler extends HeartbeatHandler {
 
   private void processConnect(Message message) {
     HashMap<String, Object> metaData = new HashMap<>();
-    String password = message.getMateData().get("password").toString();
+    String password = message.mateData().get("password").toString();
     boolean success = StringUtils.equals(password, this.password);
     if (success) {
-      int port = (int) message.getMateData().get("port");
+      int port = (int) message.mateData().get("port");
       ServerProxyHandler handler = this;
       try {
         remoteServer.bind(port, new ChannelInitializer() {
@@ -93,9 +93,7 @@ public class ServerProxyHandler extends HeartbeatHandler {
       metaData.put("success", false);
       metaData.put("reason", "Pwd is wrong");
     }
-    Message result = new Message();
-    result.setType(MessageType.AUTH);
-    result.setMateData(metaData);
+    Message result =  Message.create(MessageType.AUTH, metaData);
     ctx.writeAndFlush(result);
     if (!registered) {
       log.error("Register error, {}", metaData.get("reason"));
@@ -104,13 +102,13 @@ public class ServerProxyHandler extends HeartbeatHandler {
   }
 
   private void processDisConnect(Message message) {
-    Object channelId = message.getMateData().get("channelId");
+    Object channelId = message.mateData().get("channelId");
     channels.close(x -> x.id().asLongText().equals(channelId));
   }
 
   private void processTransfer(Message message) {
-    byte[] data = message.getBody();
-    Object channelId = message.getMateData().get("channelId");
+    byte[] data = message.body();
+    Object channelId = message.mateData().get("channelId");
     channels.writeAndFlush(data, x -> x.id().asLongText().equals(channelId));
   }
 

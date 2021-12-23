@@ -50,7 +50,7 @@ public class ClientHandler extends HeartbeatHandler {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     Message message = (Message) msg;
-    MessageType type = message.getType();
+    MessageType type = message.type();
     switch (type) {
       case AUTH:
         processAuth(message);
@@ -77,7 +77,7 @@ public class ClientHandler extends HeartbeatHandler {
   private void processConnect(Message message) throws InterruptedException {
     ClientHandler clientHandler = this;
     TcpConnection localConnection = new TcpConnection();
-    final String channelId = message.getMateData().get("channelId").toString();
+    final String channelId = message.mateData().get("channelId").toString();
     try {
       localConnection.connect(proxyAddress, proxyPort, new ChannelInitializer() {
         @Override
@@ -108,16 +108,16 @@ public class ClientHandler extends HeartbeatHandler {
   }
 
   private void processTransfer(Message message) {
-    final String channelId = message.getMateData().get("channelId").toString();
+    final String channelId = message.mateData().get("channelId").toString();
     HeartbeatHandler handler = channelMap.get(channelId);
     if (handler != null) {
       ChannelHandlerContext ctx = handler.getCtx();
-      ctx.writeAndFlush(message.getBody());
+      ctx.writeAndFlush(message.body());
     }
   }
 
   private void processDisConnect(Message message) {
-    final String channelId = message.getMateData().get("channelId").toString();
+    final String channelId = message.mateData().get("channelId").toString();
     HeartbeatHandler handler = channelMap.get(channelId);
     if (handler != null) {
       handler.getCtx().close();
@@ -126,7 +126,7 @@ public class ClientHandler extends HeartbeatHandler {
   }
 
   private void processAuth(Message message) {
-    Map<String, Object> mateData = message.getMateData();
+    Map<String, Object> mateData = message.mateData();
     Boolean success = (Boolean) mateData.get("success");
     if (Boolean.TRUE.equals(success)) {
       log.info("Register success");

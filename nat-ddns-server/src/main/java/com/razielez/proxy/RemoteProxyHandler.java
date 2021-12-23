@@ -17,21 +17,17 @@ public class RemoteProxyHandler extends HeartbeatHandler {
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    Message message = new Message();
-    message.setType(MessageType.CONNECT);
     HashMap<String, Object> metaData = new HashMap<>();
     metaData.put("channelId", ctx.channel().id().asLongText());
-    message.setMateData(metaData);
+    Message message = Message.create(MessageType.CONNECT, metaData);
     proxyHandler.getCtx().writeAndFlush(message);
   }
 
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-    Message message = new Message();
-    message.setType(MessageType.DISCONNECT);
     HashMap<String, Object> metaData = new HashMap<>();
     metaData.put("channelId", ctx.channel().id().asLongText());
-    message.setMateData(metaData);
+    Message message = Message.create(MessageType.DISCONNECT, metaData);
     proxyHandler.getCtx().writeAndFlush(message);
   }
 

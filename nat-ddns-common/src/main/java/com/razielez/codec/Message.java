@@ -20,6 +20,13 @@ public record Message(
     return new Message(0L, type, mateData, body);
   }
 
+  public static Message create(
+      final MessageType type,
+      final Map<String, Object> mateData
+  ) {
+    return new Message(0L, type, mateData, null);
+  }
+
   public static Message registerFailed(
       final String errorMsg
   ) {

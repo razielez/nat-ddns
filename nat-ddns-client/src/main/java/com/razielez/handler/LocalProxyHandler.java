@@ -21,12 +21,9 @@ public class LocalProxyHandler extends HeartbeatHandler {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     byte[] data = (byte[]) msg;
-    Message message = new Message();
-    message.setType(MessageType.TRANSFER);
-    message.setBody(data);
     Map<String, Object> metaData = new HashMap<>();
     metaData.put("channelId", remoteChannelId);
-    message.setMateData(metaData);
+    Message message = Message.create(MessageType.TRANSFER, metaData, data);
     proxyHandler.getCtx().writeAndFlush(message);
   }
 
