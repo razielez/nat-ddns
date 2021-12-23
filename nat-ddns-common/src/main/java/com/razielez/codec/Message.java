@@ -2,39 +2,22 @@ package com.razielez.codec;
 
 import java.util.HashMap;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Message {
+public record Message(
+    Long serialNo,
+    MessageType type,
+    Map<String, Object> mateData,
+    byte[] body
+) {
 
-  public static final Message HEARTBEAT = new Message(MessageType.HEARTBEAT);
-
-  /**
-   * 消息流水号
-   */
-  private Long serialNo;
-  private MessageType type;
-  private Map<String, Object> mateData;
-  private byte[] body;
-
-  public Message(MessageType type) {
-    this.type = type;
-  }
+  public static final Message HEARTBEAT = new Message(0L, MessageType.HEARTBEAT, null, null);
 
   public static Message create(
       final MessageType type,
       final Map<String, Object> mateData,
       final byte[] body
   ) {
-    Message message = new Message();
-    message.setType(type);
-    message.setMateData(mateData);
-    message.setBody(body);
-    return message;
+    return new Message(0L, type, mateData, body);
   }
 
   public static Message registerFailed(
@@ -43,9 +26,6 @@ public class Message {
     HashMap<String, Object> metaData = new HashMap<>();
     metaData.put("success", false);
     metaData.put("errorMsg", errorMsg);
-    Message message = new Message();
-    message.setMateData(metaData);
-    message.setType(MessageType.AUTH);
-    return message;
+    return new Message(0L, MessageType.AUTH, metaData, null);
   }
 }
